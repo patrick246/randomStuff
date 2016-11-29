@@ -20,11 +20,14 @@ function getMovesForPosition(x, y) {
 
 function tryPath(board, x, y, n) {
     if(_currentMax < n) {
-        console.log("new max:", n);
+        //console.log("new max:", n);
         _currentMax = n;
     }
     
     board[convertToIndex(x,y)] = n;
+
+    renderBoard(board);
+    renderProgress(n);
 
     if(n === (boardSize*boardSize - 1))
         return board;
@@ -55,6 +58,7 @@ function twoDigits(num) {
 }
 
 function renderBoard(board) {
+    process.stdout.write('\033c');
     console.log("|" + "---".repeat(boardSize) + "|");
     for(var y = 0; y < boardSize; ++y) {
         var line = "|";
@@ -67,10 +71,16 @@ function renderBoard(board) {
     console.log("|" + "---".repeat(boardSize) + "|");
 }
 
+function renderProgress(n) {
+    console.log(
+        "["+ "=".repeat((n/(boardSize*boardSize-1)*24)) + 
+             " ".repeat(24-(n/(boardSize*boardSize-1)*24)) +"]");
+}
+
 function knightsTour() {
     var board = Array(boardSize*boardSize);
     board.fill(-1);
-    var result = tryPath(board, 0, 0, 0);
+    var result = tryPath(board, 3, 3, 0);
     if(result !== false) {
         console.log("########## FOUND PATH ###########");
         renderBoard(result);
