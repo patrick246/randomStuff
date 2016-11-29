@@ -1,6 +1,10 @@
-var boardSize = 8;
+const boardSize = 8;
+const printEvery = 100000;
 
 var _currentMax = -1;
+var itCnt = 0;
+var lastTime = Date.now();
+
 
 function getMovesForPosition(x, y) {
     var moves = [
@@ -19,15 +23,21 @@ function getMovesForPosition(x, y) {
 }
 
 function tryPath(board, x, y, n) {
-    if(_currentMax < n) {
+    itCnt++;
+	if(_currentMax < n) {
         //console.log("new max:", n);
         _currentMax = n;
     }
     
     board[convertToIndex(x,y)] = n;
-
-    renderBoard(board);
-    renderProgress(n);
+	
+	if(itCnt % printEvery == 0) {
+		renderBoard(board);
+		renderProgress(n);
+		var diff = Date.now() - lastTime;
+		lastTime = Date.now();
+		console.log((printEvery/(diff/1000)).toFixed(),"iterations per second [IPS] (Took",diff,"ms)");
+	}
 
     if(n === (boardSize*boardSize - 1))
         return board;
