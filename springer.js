@@ -89,4 +89,5 @@ function knightsTour() {
     }
 }
 
+process.stdout._handle.setBlocking(true);
 knightsTour();
