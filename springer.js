@@ -90,10 +90,10 @@ function renderProgress(n) {
 function knightsTour() {
     var board = Array(boardSize*boardSize);
     board.fill(-1);
-    var result = tryPath(board, 3, 3, 0);
+    var result = tryPath(board, 0, 0, 0);
     if(result !== false) {
-        console.log("########## FOUND PATH ###########");
         renderBoard(result);
+        console.log("########## FOUND PATH ###########");
     } else {
         console.log("Keine Lösung gefunden :(");
     }
