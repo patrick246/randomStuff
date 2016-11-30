@@ -1,5 +1,5 @@
 const boardSize = 8;
-const printEvery = 100000;
+const printEvery = 25000;
 
 var _currentMax = -1;
 var itCnt = 0;
@@ -22,6 +22,15 @@ function getMovesForPosition(x, y) {
     return moves;
 }
 
+function getNonTakenMoves(board, x, y) {
+	var possibleMoves = getMovesForPosition(x, y);
+	var nonTakenMoves = possibleMoves.filter(function(move) {
+		return board[convertToIndex(move.x, move.y)] === -1;
+	});
+	return nonTakenMoves;
+}
+
+var msg = "";
 function tryPath(board, x, y, n) {
     itCnt++;
 	if(_currentMax < n) {
@@ -31,21 +40,36 @@ function tryPath(board, x, y, n) {
     
     board[convertToIndex(x,y)] = n;
 	
+	//commented out because stupidly slow due to memory allocation
+	/*for(j = 0; j < boardSize; j++) { //check for almost unreachable fields
+		for(i = 0; i < boardSize; i++) {
+			if(board[convertToIndex(i,j)] === -1){
+				var nonTakenMoves = getNonTakenMoves(board, i, j);
+				if(nonTakenMoves.length === 0) {
+					msg = "found 0 nonTakenMoves for "+i+' '+j;
+					return false;
+				}
+			}
+		}
+	}*/
+	
+	
 	if(itCnt % printEvery == 0) {
 		renderBoard(board);
 		renderProgress(n);
 		var diff = Date.now() - lastTime;
 		lastTime = Date.now();
-		console.log((printEvery/(diff/1000)).toFixed(),"iterations per second [IPS] (Took",diff,"ms)");
+		console.log((printEvery/(diff/1000)).toFixed(),"iterations per second [IPS] (Took",diff,"ms).\nIteration counter:",itCnt);
 	}
 
     if(n === (boardSize*boardSize - 1))
         return board;
 
-    var possibleMoves = getMovesForPosition(x, y);
+    /*var possibleMoves = getMovesForPosition(x, y);
     var nonTakenMoves = possibleMoves.filter(function(move) {
         return board[convertToIndex(move.x, move.y)] === -1;
-    });
+    });*/
+	var nonTakenMoves = getNonTakenMoves(board, x, y);
 
     if(nonTakenMoves.length === 0) return false; // Pfad ist zu Ende
     
@@ -61,6 +85,10 @@ function tryPath(board, x, y, n) {
 
 function convertToIndex(x, y) {
     return y*boardSize+x;
+}
+
+function convertToXY(index) {
+	return {x: index%boardSize, y: index/boardSize};
 }
 
 function twoDigits(num) {
@@ -96,6 +124,7 @@ function knightsTour() {
         console.log("########## FOUND PATH ###########");
     } else {
         console.log("Keine Lösung gefunden :(");
+		console.log(msg);
     }
 }
 
